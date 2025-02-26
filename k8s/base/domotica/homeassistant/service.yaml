@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: homeassistant-web
+spec:
+  selector:
+    app: homeassistant
+  type: ClusterIP
+  ports:
+  - port: 8123
+    targetPort: 8123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: homeassistant-web-local
+spec:
+  selector:
+    app: homeassistant
+  type: LoadBalancer
+  ports:
+  - port: 8123
+    targetPort: 8123

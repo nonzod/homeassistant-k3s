@@ -1,0 +1,41 @@
+# Deployment YAML definition
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backrest
+  namespace: restic
+  labels:
+    app: backrest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backrest
+  template:
+    metadata:
+      labels:
+        app: backrest
+    spec:
+      containers:
+        - name: backrest
+          image: garethgeorge/backrest
+          envFrom:
+            - configMapRef:
+                name: backrest-config
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+          ports:
+            - containerPort: 9898
+              protocol: TCP
+          volumeMounts:
+            - name: backrest-data
+              mountPath: /mnt
+      volumes:
+        - name: backrest-data
+          persistentVolumeClaim:
+            claimName: backrest-data-pvc
