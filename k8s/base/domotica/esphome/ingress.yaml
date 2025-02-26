@@ -3,30 +3,22 @@ kind: Ingress
 metadata:
   name: esphome-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "X-Frame-Options: SAMEORIGIN";
-      sub_filter_once off;
-      sub_filter 'src="./' 'src="./esphome/';
-      sub_filter 'href="./' 'href="./esphome/';
-      if ($request_uri ~* \.js$) {
-        more_set_headers "Content-Type: application/javascript";
-      }
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.178.0/24,10.8.0.0/24"
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: "letsencrypt-office"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - casa.mydomain.tld
-      secretName: homeassistant-tls
+        - esphome.mydomain.tld
+      secretName: esphome-tls
   rules:
-  - host: "casa.mydomain.tld"
+  - host: "esphome.mydomain.tld"
     http:
       paths:
-      - pathType: ImplementationSpecific
-        path: "/esphome(.+)"
+      - pathType: Prefix
+        path: /
         backend:
           service:
             name: esphome-web
