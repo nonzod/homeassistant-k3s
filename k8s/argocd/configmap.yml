@@ -7,6 +7,6 @@ metadata:
     app.kubernetes.io/name: argocd-cm
     app.kubernetes.io/part-of: argocd
 data:
-  url: https://argocd.nicolatomassoni.it
+  url: https://argocd.mydomain.tld
   # webhook.bitbucket.host: bitbucket.org
   admin.enabled: "true"

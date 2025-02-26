@@ -13,10 +13,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - casa.nicolatomassoni.it
+        - casa.mydomain.tld
       secretName: casa-tls
   rules:
-  - host: "casa.nicolatomassoni.it"
+  - host: "casa.mydomain.tld"
     http:
       paths:
       - pathType: ImplementationSpecific
