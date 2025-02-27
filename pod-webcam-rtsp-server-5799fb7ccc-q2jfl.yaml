@@ -1,0 +1,167 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2025-02-27T14:12:19Z"
+  generateName: webcam-rtsp-server-5799fb7ccc-
+  labels:
+    app: webcam-rtsp-server
+    pod-template-hash: 5799fb7ccc
+  name: webcam-rtsp-server-5799fb7ccc-q2jfl
+  namespace: domotica
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: webcam-rtsp-server-5799fb7ccc
+    uid: 96dfd2b7-7579-4e31-b5c2-1089eeb22215
+  resourceVersion: "177968"
+  uid: 73cb18b8-4eea-4ec6-9e6b-4b6c803c92e1
+spec:
+  containers:
+  - env:
+    - name: VIDEO_FRAMERATE
+      value: "10"
+    - name: BUFFER_SIZE
+      value: "64"
+    - name: VIDEO_WIDTH
+      value: "640"
+    - name: VIDEO_HEIGHT
+      value: "480"
+    image: ghcr.io/nonzod/gstreamer:latest
+    imagePullPolicy: Always
+    livenessProbe:
+      failureThreshold: 3
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 1
+      tcpSocket:
+        port: 8554
+      timeoutSeconds: 1
+    name: webcam-rtsp-server
+    readinessProbe:
+      failureThreshold: 3
+      initialDelaySeconds: 15
+      periodSeconds: 5
+      successThreshold: 1
+      tcpSocket:
+        port: 8554
+      timeoutSeconds: 1
+    resources:
+      limits:
+        cpu: "1"
+        memory: 2Gi
+      requests:
+        cpu: 200m
+        memory: 1Gi
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /dev/video0
+      name: webcam
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4dfvr
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: kubensis
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - hostPath:
+      path: /dev/video0
+      type: ""
+    name: webcam
+  - name: kube-api-access-4dfvr
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2025-02-27T14:12:21Z"
+    status: "True"
+    type: PodReadyToStartContainers
+  - lastProbeTime: null
+    lastTransitionTime: "2025-02-27T14:12:19Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2025-02-27T14:12:19Z"
+    message: 'containers with unready status: [webcam-rtsp-server]'
+    reason: ContainersNotReady
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2025-02-27T14:12:19Z"
+    message: 'containers with unready status: [webcam-rtsp-server]'
+    reason: ContainersNotReady
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2025-02-27T14:12:19Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - image: nonzod/gstreamer:latest
+    imageID: ""
+    lastState: {}
+    name: webcam-rtsp-server
+    ready: false
+    restartCount: 0
+    started: false
+    state:
+      waiting:
+        message: 'failed to pull and unpack image "ghcr.io/nonzod/gstreamer:latest":
+          failed to resolve reference "ghcr.io/nonzod/gstreamer:latest": failed to
+          authorize: failed to fetch anonymous token: unexpected status from GET request
+          to https://ghcr.io/token?scope=repository%3Anonzod%2Fgstreamer%3Apull&service=ghcr.io:
+          403 Forbidden'
+        reason: ErrImagePull
+    volumeMounts:
+    - mountPath: /dev/video0
+      name: webcam
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4dfvr
+      readOnly: true
+      recursiveReadOnly: Disabled
+  hostIP: 192.168.178.43
+  hostIPs:
+  - ip: 192.168.178.43
+  phase: Pending
+  podIP: 10.42.0.125
+  podIPs:
+  - ip: 10.42.0.125
+  qosClass: Burstable
+  startTime: "2025-02-27T14:12:19Z"
