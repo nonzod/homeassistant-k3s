@@ -1,23 +1,22 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
   namespace: mysql
 spec:
+  serviceName: "mysql"
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: mysql
     spec:
-      hostname: mysql-8
       containers:
-      - image: mysql:8
-        name: mysql
+      - name: mysql
+        image: mysql:8
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -28,22 +27,28 @@ spec:
         - containerPort: 3306
           name: mysql
         resources:
-            limits:
-              memory: "4Gi"
-              cpu: "2"
-            requests:
-              memory: "1Gi"
-              cpu: "0.5"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+          requests:
+            memory: "512Mi"
+            cpu: "0.2"
         volumeMounts:
-        - name: mysql-persistent-storage
+        - name: mysql-data
           mountPath: /var/lib/mysql
         - name: mysql-config
           mountPath: /etc/mysql/conf.d/custom.cnf
           subPath: custom.cnf
       volumes:
-      - name: mysql-persistent-storage
-        persistentVolumeClaim:
-          claimName: data-pvc
       - name: mysql-config
         configMap:
           name: mysql-config
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "local-path"
+      resources:
+        requests:
+          storage: 24Gi
